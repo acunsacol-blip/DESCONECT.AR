@@ -152,7 +152,6 @@ export default async function PropertiesPage() {
                                             readOnly
                                             value={`${typeof window !== 'undefined' ? window.location.origin : ''}/manage/${property.id}`}
                                             className="text-xs text-slate-600 bg-transparent w-full outline-none truncate font-mono select-all"
-                                            onClick={(e) => e.currentTarget.select()}
                                         />
                                     </div>
                                     <p className="text-[10px] text-slate-400 mt-1 text-center">Copiar y enviar al dueño</p>
