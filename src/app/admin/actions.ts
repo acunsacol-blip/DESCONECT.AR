@@ -94,7 +94,7 @@ export async function blockDate(propertyId: string, date: Date) {
 
     const { error } = await supabaseAdmin
         .from('blocked_dates')
-        .insert([{ property_id: propertyId, date: dateStr }]);
+        .insert([{ property_id: propertyId, blocked_date: dateStr }]);
 
     if (error) {
         if (error.code === '23505') return; // Duplicate, ignore
@@ -110,7 +110,7 @@ export async function unblockDate(propertyId: string, date: Date) {
         .from('blocked_dates')
         .delete()
         .eq('property_id', propertyId)
-        .eq('date', dateStr);
+        .eq('blocked_date', dateStr);
 
     if (error) throw new Error(error.message);
     revalidatePath('/admin/properties');
@@ -119,9 +119,9 @@ export async function unblockDate(propertyId: string, date: Date) {
 export async function getBlockedDates(propertyId: string) {
     const { data, error } = await supabaseAdmin
         .from('blocked_dates')
-        .select('date')
+        .select('blocked_date')
         .eq('property_id', propertyId);
 
     if (error) throw new Error(error.message);
-    return data.map(d => new Date(d.date));
+    return data.map(d => new Date(d.blocked_date));
 }
