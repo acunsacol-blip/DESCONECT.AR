@@ -2,6 +2,7 @@
 
 import { supabaseAdmin } from '../../lib/supabase';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 // OWNERS ACTIONS
 export async function addOwner(formData: FormData) {
@@ -93,6 +94,7 @@ export async function updateProperty(id: string, formData: FormData) {
 
     if (error) throw new Error(error.message);
     revalidatePath('/admin/properties');
+    redirect('/admin/properties');
 }
 
 export async function deleteProperty(id: string) {
