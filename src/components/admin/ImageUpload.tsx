@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { supabase } from '@/lib/supabase';
 import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { uploadFile } from '@/app/admin/actions';
 
 interface ImageUploadProps {
     defaultValue?: string[];
@@ -23,30 +23,17 @@ export default function ImageUpload({ defaultValue = [], onImagesChange }: Image
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-            const filePath = `property-images/${fileName}`;
 
             try {
-                const { error: uploadError } = await supabase.storage
-                    .from('properties')
-                    .upload(filePath, file);
+                const formData = new FormData();
+                formData.append('file', file);
 
-                if (uploadError) {
-                    // If bucket doesn't exist, this might fail. 
-                    // We should handle that or assume it exists.
-                    console.error('Error uploading:', uploadError);
-                    alert(`Error al subir imagen: ${uploadError.message}. Asegúrate de que el bucket "properties" exista en Supabase Storage.`);
-                    continue;
-                }
-
-                const { data: { publicUrl } } = supabase.storage
-                    .from('properties')
-                    .getPublicUrl(filePath);
-
+                const publicUrl = await uploadFile(formData);
                 newImages.push(publicUrl);
-            } catch (error) {
-                console.error('Error:', error);
+            } catch (error: any) {
+                console.error('Error uploading:', error);
+                alert(`Error al subir imagen: ${error.message}`);
+                continue;
             }
         }
 

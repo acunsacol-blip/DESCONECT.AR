@@ -4,6 +4,27 @@ import { supabaseAdmin } from '../../lib/supabase';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+export async function uploadFile(formData: FormData) {
+    const file = formData.get('file') as File;
+    if (!file) throw new Error('No file provided');
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+    const filePath = `property-images/${fileName}`;
+
+    const { error: uploadError } = await supabaseAdmin.storage
+        .from('properties')
+        .upload(filePath, file);
+
+    if (uploadError) throw new Error(uploadError.message);
+
+    const { data: { publicUrl } } = supabaseAdmin.storage
+        .from('properties')
+        .getPublicUrl(filePath);
+
+    return publicUrl;
+}
+
 // OWNERS ACTIONS
 export async function addOwner(formData: FormData) {
     const name = formData.get('name') as string;
