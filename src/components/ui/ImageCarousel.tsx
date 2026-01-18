@@ -9,7 +9,7 @@ interface ImageCarouselProps {
     className?: string;
 }
 
-export default function ImageCarousel({ images, autoPlayInterval = 5000, className }: ImageCarouselProps) {
+export default function ImageCarousel({ images, autoPlayInterval = 1000, className }: ImageCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 

@@ -56,7 +56,7 @@ export default async function Home() {
                                     <ImageCarousel
                                         images={property.images}
                                         className="h-full rounded-none"
-                                        autoPlayInterval={6000 + (Math.random() * 2000)} // Staggered start
+                                        autoPlayInterval={1000}
                                     />
                                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-slate-800 shadow-sm z-10">
                                         ${property.price}/noche
