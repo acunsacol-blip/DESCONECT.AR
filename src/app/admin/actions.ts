@@ -146,12 +146,15 @@ export async function togglePropertyStatus(id: string, currentStatus: boolean) {
 
 // BLOCKED DATES ACTIONS
 export async function blockDate(propertyId: string, date: Date) {
-    // Format date as YYYY-MM-DD
-    const dateStr = date.toISOString().split('T')[0];
+    // Format date as YYYY-MM-DD manually to avoid UTC shift
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
 
     const { error } = await supabaseAdmin
         .from('blocked_dates')
-        .insert([{ property_id: propertyId, blocked_date: dateStr }]);
+        .insert([{ property_id: propertyId, date: dateStr }]);
 
     if (error) {
         if (error.code === '23505') return; // Duplicate, ignore
@@ -161,13 +164,16 @@ export async function blockDate(propertyId: string, date: Date) {
 }
 
 export async function unblockDate(propertyId: string, date: Date) {
-    const dateStr = date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
 
     const { error } = await supabaseAdmin
         .from('blocked_dates')
         .delete()
         .eq('property_id', propertyId)
-        .eq('blocked_date', dateStr);
+        .eq('date', dateStr);
 
     if (error) throw new Error(error.message);
     revalidatePath('/admin/properties');
@@ -176,9 +182,15 @@ export async function unblockDate(propertyId: string, date: Date) {
 export async function getBlockedDates(propertyId: string) {
     const { data, error } = await supabaseAdmin
         .from('blocked_dates')
-        .select('blocked_date')
+        .select('date')
         .eq('property_id', propertyId);
 
     if (error) throw new Error(error.message);
-    return data.map(d => new Date(d.blocked_date));
+
+    // Parse YYYY-MM-DD as local time to avoid timezone shifts
+    return data.map(d => {
+        const [year, month, day] = d.date.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    });
+    // Gabriels correction: the column name is date, not blocked_date.
 }

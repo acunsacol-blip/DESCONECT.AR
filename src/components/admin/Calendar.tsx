@@ -20,8 +20,9 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
 
     const loadBlockedDates = async () => {
         try {
-            const dates = await getBlockedDates(propertyId);
-            setBlockedDates(dates);
+            const rawDates = await getBlockedDates(propertyId);
+            // Ensure dates are compared correctly by only looking at YYYY-MM-DD
+            setBlockedDates(rawDates);
         } catch (e) {
             console.error("Failed to load dates", e);
         }
@@ -39,11 +40,11 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
 
     const isBlocked = (day: number) => {
         const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-        return blockedDates.some(d =>
-            d.getDate() === dateToCheck.getDate() &&
-            d.getMonth() === dateToCheck.getMonth() &&
-            d.getFullYear() === dateToCheck.getFullYear()
-        );
+        return blockedDates.some(d => {
+            return d.getFullYear() === dateToCheck.getFullYear() &&
+                d.getMonth() === dateToCheck.getMonth() &&
+                d.getDate() === dateToCheck.getDate();
+        });
     };
 
     const toggleDate = async (day: number) => {
@@ -56,16 +57,20 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
         try {
             if (blocked) {
                 await unblockDate(propertyId, dateToToggle);
-                setBlockedDates(prev => prev.filter(d => d.getTime() !== dateToToggle.getTime()));
-                await loadBlockedDates();
+                setBlockedDates(prev => prev.filter(d =>
+                    !(d.getFullYear() === dateToToggle.getFullYear() &&
+                        d.getMonth() === dateToToggle.getMonth() &&
+                        d.getDate() === dateToToggle.getDate())
+                ));
             } else {
                 await blockDate(propertyId, dateToToggle);
                 setBlockedDates(prev => [...prev, dateToToggle]);
-                await loadBlockedDates();
             }
-        } catch (e) {
+            // Optional: refresh from server to be sure
+            await loadBlockedDates();
+        } catch (e: any) {
             console.error(e);
-            alert("Error updating date");
+            alert(`Error al actualizar fecha: ${e.message || "Error desconocido"}`);
         } finally {
             setLoading(false);
         }
