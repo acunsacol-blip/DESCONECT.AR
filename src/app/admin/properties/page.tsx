@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { addProperty, deleteProperty, togglePropertyStatus } from '../actions';
-import { Plus, Trash2, MapPin, DollarSign, Youtube, Image as ImageIcon, Eye, EyeOff, Link as LinkIcon } from 'lucide-react';
+import { Plus, Trash2, MapPin, DollarSign, Youtube, Image as ImageIcon, Eye, EyeOff, Link as LinkIcon, Edit } from 'lucide-react';
 import CalendarWrapper from '@/components/admin/CalendarWrapper';
 import Link from 'next/link';
 
@@ -115,6 +115,9 @@ export default async function PropertiesPage() {
                                                 {property.is_published ? <Eye size={20} /> : <EyeOff size={20} />}
                                             </button>
                                         </form>
+                                        <Link href={`/admin/properties/edit/${property.id}`} className="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors" title="Editar">
+                                            <Edit size={20} />
+                                        </Link>
                                         <form action={deleteProperty.bind(null, property.id)}>
                                             <button className="text-red-400 hover:text-red-600 p-2"><Trash2 size={20} /></button>
                                         </form>

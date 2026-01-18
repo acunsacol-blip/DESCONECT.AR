@@ -67,6 +67,34 @@ export async function addProperty(formData: FormData) {
     revalidatePath('/admin/properties');
 }
 
+export async function updateProperty(id: string, formData: FormData) {
+    const owner_id = formData.get('owner_id') as string;
+    const title = formData.get('title') as string;
+    const description = formData.get('description') as string;
+    const price = formData.get('price') as string;
+    const location = formData.get('location') as string;
+    const youtube_id = formData.get('youtube_id') as string;
+
+    const imagesStr = formData.get('images') as string;
+    const images = imagesStr ? imagesStr.split(',').map(s => s.trim()) : [];
+
+    const { error } = await supabaseAdmin
+        .from('properties')
+        .update({
+            owner_id,
+            title,
+            description,
+            price: parseFloat(price),
+            location,
+            youtube_id,
+            images
+        })
+        .eq('id', id);
+
+    if (error) throw new Error(error.message);
+    revalidatePath('/admin/properties');
+}
+
 export async function deleteProperty(id: string) {
     const { error } = await supabaseAdmin
         .from('properties')
