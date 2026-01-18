@@ -36,8 +36,11 @@ export default async function Home() {
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand rounded-full blur-[100px] opacity-30 animate-pulse"></div>
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-light rounded-full blur-[100px] opacity-20"></div>
 
-                <div className="relative z-20 text-center text-white px-4">
-                    <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">Desconect.ar</h1>
+                <div className="relative z-20 text-center text-white px-4 flex flex-col items-center">
+                    <div className="flex flex-col md:flex-row items-center gap-6 mb-8 group">
+                        <img src="/logo.png?v=2" alt="Logo" className="h-24 md:h-32 w-auto hover:scale-110 transition-transform duration-500 drop-shadow-2xl" />
+                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight">Desconect.ar</h1>
+                    </div>
                     <p className="text-xl md:text-2xl font-light text-slate-100 max-w-2xl mx-auto">
                         Tu refugio digital. Encuentra la paz en propiedades seleccionadas.
                     </p>

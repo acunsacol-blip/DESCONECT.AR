@@ -35,7 +35,10 @@ export default async function PropertyPage({ params }: { params: any }) {
         <div className="min-h-screen bg-slate-50 pb-20">
             {/* Nav placeholder */}
             <nav className="p-4 md:p-6 flex justify-between items-center max-w-7xl mx-auto">
-                <Link href="/" className="text-2xl font-bold text-brand">Desconect.ar</Link>
+                <Link href="/" className="flex items-center gap-2">
+                    <img src="/logo.png?v=2" alt="Logo" className="h-10 w-auto" />
+                    <span className="text-2xl font-bold text-brand">Desconect.ar</span>
+                </Link>
             </nav>
 
             <div className="max-w-7xl mx-auto px-4 pt-4">
