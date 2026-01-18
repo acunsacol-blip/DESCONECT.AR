@@ -1,12 +1,16 @@
 import Link from 'next/link';
 import { Home, Users, Calendar, LogOut } from 'lucide-react';
 import { redirect } from 'next/navigation';
+import { ensureBucketExists } from '@/lib/supabase';
 
 export default function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    // Ensure the storage bucket exists (safe to call repeatedly)
+    ensureBucketExists().catch(console.error);
+
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
             {/* Sidebar */}

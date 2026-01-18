@@ -4,6 +4,7 @@ import { Plus, Trash2, MapPin, DollarSign, Youtube, Image as ImageIcon, Eye, Eye
 import CalendarWrapper from '@/components/admin/CalendarWrapper';
 import GoogleAddressInput from '@/components/admin/GoogleAddressInput';
 import Link from 'next/link';
+import ImageUploadWrapper from '@/components/admin/ImageUploadWrapper';
 
 export const dynamic = 'force-dynamic';
 
@@ -73,12 +74,9 @@ export default async function PropertiesPage() {
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Imágenes (URLs separadas por coma)</label>
-                        <div className="relative">
-                            <ImageIcon size={16} className="absolute left-3 top-3 text-slate-400" />
-                            <input name="images" type="text" className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200" placeholder="https://..., https://..." />
-                        </div>
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Imágenes de la Propiedad</label>
+                        <ImageUploadWrapper />
                     </div>
 
                     <div className="md:col-span-2">

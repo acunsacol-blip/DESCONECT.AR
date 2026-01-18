@@ -30,3 +30,18 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 export const supabaseAdmin = supabaseServiceKey
   ? createClient(supabaseUrl, supabaseServiceKey)
   : supabase;
+
+export async function ensureBucketExists() {
+  if (!supabaseServiceKey) return;
+
+  const { data: buckets } = await supabaseAdmin.storage.listBuckets();
+  const exists = buckets?.some(b => b.name === 'properties');
+
+  if (!exists) {
+    await supabaseAdmin.storage.createBucket('properties', {
+      public: true,
+      allowedMimeTypes: ['image/*'],
+      fileSizeLimit: 5242880 // 5MB
+    });
+  }
+}
