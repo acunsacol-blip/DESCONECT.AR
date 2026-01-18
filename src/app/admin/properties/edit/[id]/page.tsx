@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { updateProperty } from '../../../actions';
-import { MapPin, DollarSign, Youtube, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { MapPin, DollarSign, Youtube, Image as ImageIcon, ArrowLeft, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import ImageUploadWrapper from '@/components/admin/ImageUploadWrapper';
@@ -82,7 +82,13 @@ export default async function EditPropertyPage({ params }: { params: any }) {
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Descripción</label>
+                        <div className="flex justify-between items-center mb-1">
+                            <label className="block text-sm font-medium text-slate-700">Descripción</label>
+                            <Link href="/admin/ai" target="_blank" className="text-xs flex items-center gap-1 text-brand hover:underline font-medium">
+                                <Sparkles size={12} />
+                                Ayuda con AI (Eddy)
+                            </Link>
+                        </div>
                         <textarea name="description" defaultValue={property.description || ''} className="w-full px-4 py-2 rounded-lg border border-slate-200 h-24" placeholder="Detalles de la propiedad..." />
                     </div>
 

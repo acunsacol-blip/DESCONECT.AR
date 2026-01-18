@@ -30,6 +30,10 @@ export default function AdminLayout({
                         <Home size={20} />
                         <span>Propiedades</span>
                     </Link>
+                    <Link href="/admin/ai" className="flex items-center space-x-2 md:space-x-3 px-3 py-2 md:px-4 md:py-3 text-slate-600 hover:bg-brand/10 hover:text-brand rounded-lg transition-colors whitespace-nowrap">
+                        <Calendar size={20} className="text-brand animate-pulse" />
+                        <span className="font-bold">Asistente AI (Eddy)</span>
+                    </Link>
 
                     <div className="md:mt-8 flex-1 md:flex-none flex justify-end md:block">
                         <form action={async () => {
