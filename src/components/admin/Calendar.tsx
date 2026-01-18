@@ -117,8 +117,8 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
                 })}
             </div>
             <div className="mt-4 flex gap-4 text-xs text-slate-500 justify-center">
-                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-100"></div> Bloqueado</div>
-                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded border border-slate-200"></div> Libre</div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-100"></div> {readOnly ? 'No disponible' : 'Bloqueado'}</div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 rounded border border-slate-200"></div> {readOnly ? 'Disponible' : 'Libre'}</div>
             </div>
         </div>
     );
