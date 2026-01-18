@@ -6,24 +6,27 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 interface ImageCarouselProps {
     images: string[];
     autoPlayInterval?: number;
+    className?: string;
 }
 
-export default function ImageCarousel({ images, autoPlayInterval = 5000 }: ImageCarouselProps) {
+export default function ImageCarousel({ images, autoPlayInterval = 5000, className }: ImageCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 
-    const nextSlide = useCallback(() => {
+    const nextSlide = useCallback((e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
         setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
     }, [images.length]);
 
-    const prevSlide = () => {
+    const prevSlide = (e: React.MouseEvent) => {
+        e.stopPropagation();
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
     };
 
     useEffect(() => {
         if (images.length <= 1 || isHovered) return;
 
-        const interval = setInterval(nextSlide, autoPlayInterval);
+        const interval = setInterval(() => nextSlide(), autoPlayInterval);
         return () => clearInterval(interval);
     }, [images.length, autoPlayInterval, nextSlide, isHovered]);
 
@@ -31,7 +34,7 @@ export default function ImageCarousel({ images, autoPlayInterval = 5000 }: Image
 
     return (
         <div
-            className="relative w-full h-[300px] md:h-[500px] rounded-2xl overflow-hidden shadow-lg border-4 border-white mb-8 group"
+            className={`relative w-full overflow-hidden group ${className || 'h-[300px] md:h-[500px] rounded-2xl shadow-lg border-4 border-white'}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -76,7 +79,10 @@ export default function ImageCarousel({ images, autoPlayInterval = 5000 }: Image
                     {images.map((_, index) => (
                         <button
                             key={index}
-                            onClick={() => setCurrentIndex(index)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentIndex(index);
+                            }}
                             className={`w-2.5 h-2.5 rounded-full transition-all ${currentIndex === index ? 'bg-white scale-125' : 'bg-white/50'
                                 }`}
                         />

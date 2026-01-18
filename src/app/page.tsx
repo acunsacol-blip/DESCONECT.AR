@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { MapPin, ArrowRight } from 'lucide-react';
+import ImageCarousel from '@/components/ui/ImageCarousel';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 
 export const revalidate = 60; // Revalidate every minute
@@ -52,13 +53,12 @@ export default async function Home() {
                         <Link prefetch={false} href={`/properties/${property.id}`} key={property.id} className="group cursor-pointer">
                             <div className="glass-panel p-3 rounded-2xl h-full transition-transform duration-300 group-hover:-translate-y-2">
                                 <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4 relative">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={property.images?.[0] || 'https://via.placeholder.com/800x600?text=No+Image'}
-                                        alt={property.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    <ImageCarousel
+                                        images={property.images}
+                                        className="h-full rounded-none"
+                                        autoPlayInterval={6000 + (Math.random() * 2000)} // Staggered start
                                     />
-                                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-slate-800 shadow-sm">
+                                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-slate-800 shadow-sm z-10">
                                         ${property.price}/noche
                                     </div>
                                 </div>
