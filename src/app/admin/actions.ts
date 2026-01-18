@@ -8,6 +8,12 @@ export async function uploadFile(formData: FormData) {
     const file = formData.get('file') as File;
     if (!file) throw new Error('No file provided');
 
+    // Diagnostic check for service key
+    const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.SUPABASE_SERVICE_ROLE_KEY !== 'your-service-role-key';
+    if (!hasServiceKey) {
+        throw new Error('Configuración incompleta: Falta la SUPABASE_SERVICE_ROLE_KEY en las variables de entorno para permitir subidas.');
+    }
+
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
     const filePath = `property-images/${fileName}`;
