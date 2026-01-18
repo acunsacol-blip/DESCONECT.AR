@@ -4,6 +4,7 @@ import { MapPin, DollarSign, Calendar as CalendarIcon } from 'lucide-react';
 import BentoGrid from '@/components/ui/BentoGrid';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 import Link from 'next/link';
+import WhatsAppSidebarButton from '@/components/ui/WhatsAppSidebarButton';
 import Calendar from '@/components/admin/Calendar';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -118,14 +119,7 @@ export default async function PropertyPage({ params }: { params: any }) {
                                 </div>
                             </div>
 
-                            <a
-                                href="https://wa.me/541122551514" // Default, but the floating one handles time logic. 
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block w-full text-center glass-button py-4 rounded-xl font-bold text-lg"
-                            >
-                                Reservar Ahora
-                            </a>
+                            <WhatsAppSidebarButton />
                         </div>
                     </div>
                 </div>
