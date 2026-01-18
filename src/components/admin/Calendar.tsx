@@ -11,7 +11,7 @@ interface CalendarProps {
 
 export default function Calendar({ propertyId, readOnly = false }: CalendarProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [blockedDates, setBlockedDates] = useState<Date[]>([]);
+    const [blockedDates, setBlockedDates] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -20,12 +20,18 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
 
     const loadBlockedDates = async () => {
         try {
-            const rawDates = await getBlockedDates(propertyId);
-            // Ensure dates are compared correctly by only looking at YYYY-MM-DD
-            setBlockedDates(rawDates);
+            const strings = await getBlockedDates(propertyId);
+            setBlockedDates(strings || []);
         } catch (e) {
             console.error("Failed to load dates", e);
         }
+    };
+
+    const formatDate = (date: Date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     };
 
     const getDaysInMonth = (date: Date) => {
@@ -40,11 +46,8 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
 
     const isBlocked = (day: number) => {
         const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-        return blockedDates.some(d => {
-            return d.getFullYear() === dateToCheck.getFullYear() &&
-                d.getMonth() === dateToCheck.getMonth() &&
-                d.getDate() === dateToCheck.getDate();
-        });
+        const dateStr = formatDate(dateToCheck);
+        return blockedDates.includes(dateStr);
     };
 
     const toggleDate = async (day: number) => {
@@ -52,25 +55,24 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
         setLoading(true);
 
         const dateToToggle = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        const dateStr = formatDate(dateToToggle);
         const blocked = isBlocked(day);
 
         try {
+            let newBlockedDates: string[];
             if (blocked) {
-                await unblockDate(propertyId, dateToToggle);
-                setBlockedDates(prev => prev.filter(d =>
-                    !(d.getFullYear() === dateToToggle.getFullYear() &&
-                        d.getMonth() === dateToToggle.getMonth() &&
-                        d.getDate() === dateToToggle.getDate())
-                ));
+                newBlockedDates = await unblockDate(propertyId, dateToToggle);
             } else {
-                await blockDate(propertyId, dateToToggle);
-                setBlockedDates(prev => [...prev, dateToToggle]);
+                newBlockedDates = await blockDate(propertyId, dateToToggle);
             }
-            // Optional: refresh from server to be sure
-            await loadBlockedDates();
+            if (newBlockedDates) {
+                setBlockedDates(newBlockedDates);
+            }
         } catch (e: any) {
             console.error(e);
             alert(`Error al actualizar fecha: ${e.message || "Error desconocido"}`);
+            // Reload to sync state on error
+            await loadBlockedDates();
         } finally {
             setLoading(false);
         }

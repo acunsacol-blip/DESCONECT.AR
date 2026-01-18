@@ -146,7 +146,6 @@ export async function togglePropertyStatus(id: string, currentStatus: boolean) {
 
 // BLOCKED DATES ACTIONS
 export async function blockDate(propertyId: string, date: Date) {
-    // Format date as YYYY-MM-DD manually to avoid UTC shift
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -156,11 +155,12 @@ export async function blockDate(propertyId: string, date: Date) {
         .from('blocked_dates')
         .insert([{ property_id: propertyId, date: dateStr }]);
 
-    if (error) {
-        if (error.code === '23505') return; // Duplicate, ignore
+    if (error && error.code !== '23505') {
         throw new Error(error.message);
     }
+
     revalidatePath('/admin/properties');
+    return getBlockedDates(propertyId);
 }
 
 export async function unblockDate(propertyId: string, date: Date) {
@@ -177,6 +177,7 @@ export async function unblockDate(propertyId: string, date: Date) {
 
     if (error) throw new Error(error.message);
     revalidatePath('/admin/properties');
+    return getBlockedDates(propertyId);
 }
 
 export async function getBlockedDates(propertyId: string) {
@@ -187,10 +188,6 @@ export async function getBlockedDates(propertyId: string) {
 
     if (error) throw new Error(error.message);
 
-    // Parse YYYY-MM-DD as local time to avoid timezone shifts
-    return data.map(d => {
-        const [year, month, day] = d.date.split('-').map(Number);
-        return new Date(year, month - 1, day);
-    });
-    // Gabriels correction: the column name is date, not blocked_date.
+    // Return strings YYYY-MM-DD for simpler serialization
+    return (data || []).map(d => d.date);
 }
