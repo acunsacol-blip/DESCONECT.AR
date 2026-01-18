@@ -59,19 +59,21 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
         const blocked = isBlocked(day);
 
         try {
-            let newBlockedDates: string[];
+            let result: { data?: string[], error?: string };
             if (blocked) {
-                newBlockedDates = await unblockDate(propertyId, dateStr);
+                result = await unblockDate(propertyId, dateStr);
             } else {
-                newBlockedDates = await blockDate(propertyId, dateStr);
+                result = await blockDate(propertyId, dateStr);
             }
-            if (newBlockedDates) {
-                setBlockedDates(newBlockedDates);
+
+            if (result.error) {
+                alert(`Error: ${result.error}`);
+            } else if (result.data) {
+                setBlockedDates(result.data);
             }
         } catch (e: any) {
             console.error(e);
-            alert(`Error al actualizar fecha: ${e.message || "Error desconocido"}`);
-            // Reload to sync state on error
+            alert(`Error de conexión: ${e.message || "Error desconocido"}`);
             await loadBlockedDates();
         } finally {
             setLoading(false);

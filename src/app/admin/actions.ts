@@ -146,57 +146,61 @@ export async function togglePropertyStatus(id: string, currentStatus: boolean) {
 
 // BLOCKED DATES ACTIONS
 export async function blockDate(propertyId: string, dateStr: string) {
-    console.log(`[Server Action] Blocking date: ${dateStr} for property: ${propertyId}`);
-
     try {
-        const { error } = await supabaseAdmin
-            .from('blocked_dates')
-            .insert([{ property_id: propertyId, date: dateStr }]);
-
-        if (error && error.code !== '23505') {
-            console.error('[Server Action] Supabase Error (blockDate):', error);
-            throw new Error(`Error de base de datos: ${error.message}`);
+        if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            return { error: 'Falta la llave de servicio (SUPABASE_SERVICE_ROLE_KEY) en la configuración de Vercel.' };
         }
 
-        revalidatePath('/admin/properties');
-        return getBlockedDates(propertyId);
+        const { error } = await supabaseAdmin
+            .from('blocked_dates')
+            .insert([{ property_id: propertyId, blocked_date: dateStr }]);
+
+        if (error) {
+            if (error.code === '23505') {
+                const data = await getBlockedDates(propertyId);
+                return { data };
+            }
+            return { error: `Error de base de datos (${error.code}): ${error.message}` };
+        }
+
+        const data = await getBlockedDates(propertyId);
+        return { data };
     } catch (e: any) {
-        console.error('[Server Action] Error in blockDate:', e);
-        throw new Error(e.message || 'Error desconocido al bloquear fecha');
+        return { error: `Excepción en el servidor: ${e.message || 'Error desconocido'}` };
     }
 }
 
 export async function unblockDate(propertyId: string, dateStr: string) {
-    console.log(`[Server Action] Unblocking date: ${dateStr} for property: ${propertyId}`);
-
     try {
+        if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            return { error: 'Falta la llave de servicio (SUPABASE_SERVICE_ROLE_KEY) en la configuración de Vercel.' };
+        }
+
         const { error } = await supabaseAdmin
             .from('blocked_dates')
             .delete()
             .eq('property_id', propertyId)
-            .eq('date', dateStr);
+            .eq('blocked_date', dateStr);
 
         if (error) {
-            console.error('[Server Action] Supabase Error (unblockDate):', error);
-            throw new Error(`Error de base de datos: ${error.message}`);
+            return { error: `Error de base de datos: ${error.message}` };
         }
 
-        revalidatePath('/admin/properties');
-        return getBlockedDates(propertyId);
+        const data = await getBlockedDates(propertyId);
+        return { data };
     } catch (e: any) {
-        console.error('[Server Action] Error in unblockDate:', e);
-        throw new Error(e.message || 'Error desconocido al desbloquear fecha');
+        return { error: `Excepción en el servidor: ${e.message || 'Error desconocido'}` };
     }
 }
 
 export async function getBlockedDates(propertyId: string) {
     const { data, error } = await supabaseAdmin
         .from('blocked_dates')
-        .select('date')
+        .select('blocked_date')
         .eq('property_id', propertyId);
 
     if (error) throw new Error(error.message);
 
     // Return strings YYYY-MM-DD for simpler serialization
-    return (data || []).map(d => d.date);
+    return (data || []).map(d => d.blocked_date);
 }
