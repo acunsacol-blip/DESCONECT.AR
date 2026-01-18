@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import { MapPin, DollarSign, Calendar as CalendarIcon } from 'lucide-react';
-import BentoGrid from '@/components/ui/BentoGrid';
+import ImageCarousel from '@/components/ui/ImageCarousel';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 import Link from 'next/link';
 import WhatsAppSidebarButton from '@/components/ui/WhatsAppSidebarButton';
@@ -39,7 +39,7 @@ export default async function PropertyPage({ params }: { params: any }) {
             </nav>
 
             <div className="max-w-7xl mx-auto px-4 pt-4">
-                <BentoGrid images={property.images} />
+                <ImageCarousel images={property.images} />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
                     {/* Main Content */}
