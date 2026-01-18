@@ -61,9 +61,9 @@ export default function Calendar({ propertyId, readOnly = false }: CalendarProps
         try {
             let newBlockedDates: string[];
             if (blocked) {
-                newBlockedDates = await unblockDate(propertyId, dateToToggle);
+                newBlockedDates = await unblockDate(propertyId, dateStr);
             } else {
-                newBlockedDates = await blockDate(propertyId, dateToToggle);
+                newBlockedDates = await blockDate(propertyId, dateStr);
             }
             if (newBlockedDates) {
                 setBlockedDates(newBlockedDates);

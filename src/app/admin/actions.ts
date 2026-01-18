@@ -145,39 +145,48 @@ export async function togglePropertyStatus(id: string, currentStatus: boolean) {
 }
 
 // BLOCKED DATES ACTIONS
-export async function blockDate(propertyId: string, date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
+export async function blockDate(propertyId: string, dateStr: string) {
+    console.log(`[Server Action] Blocking date: ${dateStr} for property: ${propertyId}`);
 
-    const { error } = await supabaseAdmin
-        .from('blocked_dates')
-        .insert([{ property_id: propertyId, date: dateStr }]);
+    try {
+        const { error } = await supabaseAdmin
+            .from('blocked_dates')
+            .insert([{ property_id: propertyId, date: dateStr }]);
 
-    if (error && error.code !== '23505') {
-        throw new Error(error.message);
+        if (error && error.code !== '23505') {
+            console.error('[Server Action] Supabase Error (blockDate):', error);
+            throw new Error(`Error de base de datos: ${error.message}`);
+        }
+
+        revalidatePath('/admin/properties');
+        return getBlockedDates(propertyId);
+    } catch (e: any) {
+        console.error('[Server Action] Error in blockDate:', e);
+        throw new Error(e.message || 'Error desconocido al bloquear fecha');
     }
-
-    revalidatePath('/admin/properties');
-    return getBlockedDates(propertyId);
 }
 
-export async function unblockDate(propertyId: string, date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
+export async function unblockDate(propertyId: string, dateStr: string) {
+    console.log(`[Server Action] Unblocking date: ${dateStr} for property: ${propertyId}`);
 
-    const { error } = await supabaseAdmin
-        .from('blocked_dates')
-        .delete()
-        .eq('property_id', propertyId)
-        .eq('date', dateStr);
+    try {
+        const { error } = await supabaseAdmin
+            .from('blocked_dates')
+            .delete()
+            .eq('property_id', propertyId)
+            .eq('date', dateStr);
 
-    if (error) throw new Error(error.message);
-    revalidatePath('/admin/properties');
-    return getBlockedDates(propertyId);
+        if (error) {
+            console.error('[Server Action] Supabase Error (unblockDate):', error);
+            throw new Error(`Error de base de datos: ${error.message}`);
+        }
+
+        revalidatePath('/admin/properties');
+        return getBlockedDates(propertyId);
+    } catch (e: any) {
+        console.error('[Server Action] Error in unblockDate:', e);
+        throw new Error(e.message || 'Error desconocido al desbloquear fecha');
+    }
 }
 
 export async function getBlockedDates(propertyId: string) {
