@@ -1,7 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { addProperty, deleteProperty, togglePropertyStatus } from '../actions';
 import { Plus, Trash2, MapPin, DollarSign, Youtube, Image as ImageIcon, Eye, EyeOff, Link as LinkIcon } from 'lucide-react';
-import Calendar from '@/components/admin/Calendar';
+import CalendarWrapper from '@/components/admin/CalendarWrapper';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -142,7 +142,7 @@ export default async function PropertiesPage() {
                             {/* Calendar & Owner Link */}
                             <div className="border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-6 flex flex-col items-center w-full md:w-auto">
                                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Bloquear Fechas</span>
-                                <Calendar propertyId={property.id} />
+                                <CalendarWrapper propertyId={property.id} />
 
                                 <div className="mt-4 pt-4 border-t border-slate-100 w-full">
                                     <p className="text-xs text-slate-400 mb-2 font-medium text-center">Enlace para el Dueño:</p>
