@@ -29,7 +29,6 @@ export default function GoogleAddressInput({ name, placeholder, required = false
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     onBlur={handleSearch} // Auto-update on blur
-                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleSearch())}
                     list="common-locations" // Simple browser-based suggestion placeholder
                 />
                 <button
