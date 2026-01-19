@@ -63,9 +63,10 @@ export default function ImageUpload({ defaultValue = [], onImagesChange }: Image
                         <button
                             type="button"
                             onClick={() => removeImage(index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full transition-transform hover:scale-110 shadow-lg z-10"
+                            title="Eliminar imagen"
                         >
-                            <X size={14} />
+                            <X size={16} />
                         </button>
                     </div>
                 ))}
